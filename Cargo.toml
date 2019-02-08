@@ -1,0 +1,9 @@
+[package]
+name = "abbiocco"
+version = "0.1.0"
+authors = ["Giorgio Pomettini <giorgio.pomettini@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+sdl2 = "0.32.1"
+hlua = "0.4.1"
