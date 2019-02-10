@@ -6,7 +6,6 @@ use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
-use sdl2::*;
 use std::cell::RefCell;
 use std::fs::File;
 use std::io::prelude::*;
@@ -14,13 +13,15 @@ use std::path::Path;
 use std::time::Duration;
 
 static TARGET_FPS: u32 = 30;
+static WIDTH: u32 = 512;
+static HEIGHT: u32 = 512;
 
 pub fn main() {
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
 
     let window = video_subsystem
-        .window("Abbiocco", 512, 512)
+        .window("Abbiocco", WIDTH, HEIGHT)
         .position_centered()
         .build()
         .unwrap();
@@ -32,6 +33,19 @@ pub fn main() {
     let mut lua = Lua::new();
 
     lua.set(
+        "rect",
+        hlua::function4(|x0: i32, y0: i32, x1: u32, y1: u32| {
+            canvas
+                .borrow_mut()
+                .set_draw_color(Color::RGB(255, 255, 255));
+            canvas
+                .borrow_mut()
+                .draw_rect(Rect::new(x0, y0, x1 - x0 as u32, y1 - y0 as u32))
+                .unwrap();
+        }),
+    );
+    
+    lua.set(
         "rectfill",
         hlua::function4(|x0: i32, y0: i32, x1: u32, y1: u32| {
             canvas
@@ -39,26 +53,21 @@ pub fn main() {
                 .set_draw_color(Color::RGB(255, 255, 255));
             canvas
                 .borrow_mut()
-                .fill_rect(Rect::new(x0, y0, x1, y1))
+                .fill_rect(Rect::new(x0, y0, x1 - x0 as u32, y1 - y0 as u32))
                 .unwrap();
         }),
     );
-
-    lua.set(
-        "circfill",
-        hlua::function3(|x: i32, y: i32, r: u32| {
-            // canvas.borrow_mut().set_draw_color(Color::RGB(255, 210, 0));
-        }),
-    );
-
+    
     lua.execute_from_reader::<(), _>(File::open(&Path::new("resources/main.lua")).unwrap())
         .unwrap();
 
     'running: loop {
-        // Start draw stuff
+        // Clear canvas
 
         canvas.borrow_mut().set_draw_color(Color::RGB(0, 0, 0));
         canvas.borrow_mut().clear();
+
+        // Start draw stuff
 
         {
             let mut update_func: hlua::LuaFunction<_> = lua.get("_update").unwrap();

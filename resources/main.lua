@@ -1,15 +1,15 @@
-cur_frame = 0
+frame = 0
 
 function _init()
-    
 end
 
 function _update()
-	cur_frame = cur_frame + 1
+	frame = frame + 1
 end
 
 function _draw()
-	rectfill(10 + cur_frame, 10 + cur_frame, 50, 50, 1)
+	rect(0, 0, 100, 100, 1)
+	rectfill(50, 50, 150, 150, 2)
 end
 
 -- spr(1, 60, 60)
