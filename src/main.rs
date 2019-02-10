@@ -7,6 +7,7 @@ use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
 use sdl2::*;
+use std::cell::RefCell;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
@@ -24,22 +25,31 @@ pub fn main() {
         .build()
         .unwrap();
 
-    let mut canvas = window.into_canvas().build().unwrap();
-
-    canvas.set_draw_color(Color::RGB(0, 255, 255));
-    canvas.clear();
-    canvas.present();
+    let canvas = RefCell::new(window.into_canvas().build().unwrap());
 
     let mut event_pump = sdl_context.event_pump().unwrap();
 
     let mut lua = Lua::new();
 
-    fn rectfill_func(x0: u32, y0: u32, x1: u32, y1: u32) {
-        // canvas.fill_rect(Rect::new(10, 10, 780, 580));
-        println!("{:?}", x0);
-    }
+    lua.set(
+        "rectfill",
+        hlua::function4(|x0: i32, y0: i32, x1: u32, y1: u32| {
+            canvas
+                .borrow_mut()
+                .set_draw_color(Color::RGB(255, 255, 255));
+            canvas
+                .borrow_mut()
+                .fill_rect(Rect::new(x0, y0, x1, y1))
+                .unwrap();
+        }),
+    );
 
-    lua.set("rectfill", hlua::function4(rectfill_func));
+    lua.set(
+        "circfill",
+        hlua::function3(|x: i32, y: i32, r: u32| {
+            // canvas.borrow_mut().set_draw_color(Color::RGB(255, 210, 0));
+        }),
+    );
 
     lua.execute_from_reader::<(), _>(File::open(&Path::new("resources/main.lua")).unwrap())
         .unwrap();
@@ -47,18 +57,21 @@ pub fn main() {
     'running: loop {
         // Start draw stuff
 
+        canvas.borrow_mut().set_draw_color(Color::RGB(0, 0, 0));
+        canvas.borrow_mut().clear();
+
         {
             let mut update_func: hlua::LuaFunction<_> = lua.get("_update").unwrap();
-            let update_ret: hlua::AnyLuaValue = update_func.call().unwrap();
+            let _update_ret: hlua::AnyLuaValue = update_func.call().unwrap();
         }
 
         {
             let mut draw_func: hlua::LuaFunction<_> = lua.get("_draw").unwrap();
-            let draw_ret: hlua::AnyLuaValue = draw_func.call().unwrap();
+            let _draw_ret: hlua::AnyLuaValue = draw_func.call().unwrap();
         }
 
-        let cur_frame: i32 = lua.get("cur_frame").unwrap();
-        println!("{:?}", cur_frame);
+        // let cur_frame: i32 = lua.get("cur_frame").unwrap();
+        // println!("{:?}", cur_frame);
 
         // End draw stuff
 
@@ -73,7 +86,8 @@ pub fn main() {
             }
         }
 
-        // canvas.present();
+        canvas.borrow_mut().present();
+
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / TARGET_FPS));
     }
 }
