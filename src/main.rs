@@ -1,20 +1,37 @@
 extern crate hlua;
 extern crate sdl2;
 
+pub mod primitives;
+pub mod drawing;
+
 use hlua::{AnyLuaValue, Lua};
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
+use std::borrow::ToOwned;
 use std::cell::RefCell;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
+use std::rc::Rc;
 use std::time::Duration;
+
+use primitives::*;
+use drawing::*;
 
 static TARGET_FPS: u32 = 30;
 static WIDTH: u32 = 512;
 static HEIGHT: u32 = 512;
+
+/*
+    TODO (by priority)
+    * All graphical primitives
+    * Input handling
+    * Sprite support
+    * Sfx
+    * Music
+*/
 
 pub fn main() {
     let sdl_context = sdl2::init().unwrap();
@@ -27,37 +44,13 @@ pub fn main() {
         .unwrap();
 
     let canvas = RefCell::new(window.into_canvas().build().unwrap());
+    let mut lua = Lua::new();
 
     let mut event_pump = sdl_context.event_pump().unwrap();
 
-    let mut lua = Lua::new();
+    init_drawing!(lua, canvas);
+    init_primitives!(lua, canvas);
 
-    lua.set(
-        "rect",
-        hlua::function4(|x0: i32, y0: i32, x1: u32, y1: u32| {
-            canvas
-                .borrow_mut()
-                .set_draw_color(Color::RGB(255, 255, 255));
-            canvas
-                .borrow_mut()
-                .draw_rect(Rect::new(x0, y0, x1 - x0 as u32, y1 - y0 as u32))
-                .unwrap();
-        }),
-    );
-    
-    lua.set(
-        "rectfill",
-        hlua::function4(|x0: i32, y0: i32, x1: u32, y1: u32| {
-            canvas
-                .borrow_mut()
-                .set_draw_color(Color::RGB(255, 255, 255));
-            canvas
-                .borrow_mut()
-                .fill_rect(Rect::new(x0, y0, x1 - x0 as u32, y1 - y0 as u32))
-                .unwrap();
-        }),
-    );
-    
     lua.execute_from_reader::<(), _>(File::open(&Path::new("resources/main.lua")).unwrap())
         .unwrap();
 
