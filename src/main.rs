@@ -5,7 +5,6 @@ pub mod colors;
 pub mod drawing;
 pub mod font;
 pub mod math;
-pub mod music;
 pub mod primitives;
 pub mod sound;
 
@@ -24,8 +23,6 @@ use colors::*;
 use drawing::*;
 use font::*;
 use math::*;
-use music::*;
-use primitives::*;
 use primitives::*;
 use sound::*;
 
@@ -60,8 +57,17 @@ pub fn main() {
 
     let mut event_pump = sdl_context.event_pump().unwrap();
 
+    // use colors::*;
+    // use drawing::*;
+    // use font::*;
+    // use math::*;
+    // use primitives::*;
+    // use sound::*;
+
     init_drawing!(lua, canvas);
+    init_math!(lua, canvas);
     init_primitives!(lua, canvas);
+    init_sound!(lua, canvas);
 
     lua.execute_from_reader::<(), _>(File::open(&Path::new("resources/main.lua")).unwrap())
         .unwrap();

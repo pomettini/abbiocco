@@ -31,14 +31,14 @@ macro_rules! init_math {
 
         $lua.set(
             "max",
-            hlua::function1(|first: f32, second: f32| {
+            hlua::function2(|first: f32, second: f32| {
                 unimplemented!();
             }),
         );
 
         $lua.set(
             "min",
-            hlua::function1(|first: f32, second: f32| {
+            hlua::function2(|first: f32, second: f32| {
                 unimplemented!();
             }),
         );
