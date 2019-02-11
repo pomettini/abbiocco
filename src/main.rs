@@ -3,22 +3,22 @@ extern crate sdl2;
 
 pub mod primitives;
 pub mod drawing;
+pub mod colors;
 
 use hlua::{AnyLuaValue, Lua};
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::rect::{Point, Rect};
-use std::borrow::ToOwned;
 use std::cell::RefCell;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
-use std::rc::Rc;
 use std::time::Duration;
 
 use primitives::*;
 use drawing::*;
+use colors::*;
 
 static TARGET_FPS: u32 = 30;
 static WIDTH: u32 = 512;
@@ -29,6 +29,7 @@ static HEIGHT: u32 = 512;
     * All graphical primitives
     * Input handling
     * Sprite support
+    * Add fonts
     * Sfx
     * Music
 */
