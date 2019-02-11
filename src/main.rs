@@ -1,9 +1,13 @@
 extern crate hlua;
 extern crate sdl2;
 
-pub mod primitives;
-pub mod drawing;
 pub mod colors;
+pub mod drawing;
+pub mod font;
+pub mod math;
+pub mod music;
+pub mod primitives;
+pub mod sound;
 
 use hlua::{AnyLuaValue, Lua};
 use sdl2::event::Event;
@@ -16,9 +20,14 @@ use std::io::prelude::*;
 use std::path::Path;
 use std::time::Duration;
 
-use primitives::*;
-use drawing::*;
 use colors::*;
+use drawing::*;
+use font::*;
+use math::*;
+use music::*;
+use primitives::*;
+use primitives::*;
+use sound::*;
 
 static TARGET_FPS: u32 = 30;
 static WIDTH: u32 = 512;
@@ -32,6 +41,8 @@ static HEIGHT: u32 = 512;
     * Add fonts
     * Sfx
     * Music
+    * Add tests lol
+    * Error handling
 */
 
 pub fn main() {
@@ -58,7 +69,7 @@ pub fn main() {
     'running: loop {
         // Clear canvas
 
-        canvas.borrow_mut().set_draw_color(Color::RGB(0, 0, 0));
+        canvas.borrow_mut().set_draw_color(colors::COLOR_BLACK);
         canvas.borrow_mut().clear();
 
         // Start draw stuff

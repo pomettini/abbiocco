@@ -26,5 +26,33 @@ macro_rules! init_primitives {
                     .unwrap();
             }),
         );
+
+        $lua.set(
+            "circ",
+            hlua::function4(|x: i32, y: i32, r: u32, c: u32| {
+                unimplemented!();
+            }),
+        );
+
+        $lua.set(
+            "circfill",
+            hlua::function4(|x: i32, y: i32, r: u32, c: u32| {
+                unimplemented!();
+            }),
+        );
+
+        $lua.set(
+            "circ",
+            hlua::function4(|x: i32, y: i32, r: u32, c: u32| {
+                unimplemented!();
+            }),
+        );
+
+        $lua.set(
+            "line",
+            hlua::function5(|x0: u32, y0: u32, x1: u32, y1: u32, c: u32| {
+                unimplemented!();
+            }),
+        );
     };
 }
