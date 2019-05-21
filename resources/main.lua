@@ -9,8 +9,8 @@ end
 
 function _draw()
 	cls()
-	rect(0, 0, 100, 100, 1)
-	rectfill(50, 50, 150, 150, 2)
+	rect(frame, frame, frame + 100, frame + 100, 1)
+	rectfill(frame + 50, frame + 50, frame + 150, frame + 150, 2)
 end
 
 -- spr(1, 60, 60)
